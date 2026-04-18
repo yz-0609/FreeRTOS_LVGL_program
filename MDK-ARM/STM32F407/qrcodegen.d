@@ -1,0 +1,15 @@
+stm32f407\qrcodegen.o: ..\LVGL\src\extra\libs\qrcode\qrcodegen.c
+stm32f407\qrcodegen.o: E:\keilc51\ARM\ARMCC\Bin\..\include\limits.h
+stm32f407\qrcodegen.o: E:\keilc51\ARM\ARMCC\Bin\..\include\stdlib.h
+stm32f407\qrcodegen.o: E:\keilc51\ARM\ARMCC\Bin\..\include\string.h
+stm32f407\qrcodegen.o: ..\LVGL\src\extra\libs\qrcode\qrcodegen.h
+stm32f407\qrcodegen.o: E:\keilc51\ARM\ARMCC\Bin\..\include\stdbool.h
+stm32f407\qrcodegen.o: E:\keilc51\ARM\ARMCC\Bin\..\include\stddef.h
+stm32f407\qrcodegen.o: E:\keilc51\ARM\ARMCC\Bin\..\include\stdint.h
+stm32f407\qrcodegen.o: ..\LVGL\src\extra\libs\qrcode\../../../misc/lv_assert.h
+stm32f407\qrcodegen.o: ..\LVGL\src\extra\libs\qrcode\../../../misc/../lv_conf_internal.h
+stm32f407\qrcodegen.o: ..\LVGL\src\extra\libs\qrcode\../../../misc/../lv_conf_kconfig.h
+stm32f407\qrcodegen.o: ../LVGL/examples/porting/../../lv_conf.h
+stm32f407\qrcodegen.o: ..\LVGL\src\extra\libs\qrcode\../../../misc/lv_log.h
+stm32f407\qrcodegen.o: ..\LVGL\src\extra\libs\qrcode\../../../misc/lv_types.h
+stm32f407\qrcodegen.o: ..\LVGL\src\extra\libs\qrcode\../../../misc/lv_mem.h
