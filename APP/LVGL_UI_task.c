@@ -9,7 +9,6 @@
 #include "lv_port_indev.h"       // LVGL�Ĵ���֧��
 #include "gui_guider.h"
 #include "events_init.h"
-#include "string.h"
 
 #define UI_MAX_MSG_PER_CYCLE 10U
 #define UI_DEGREE_SYMBOL     "\xC2\xB0"
@@ -33,7 +32,7 @@ static volatile uint32_t g_drop_task_send_by_type[UI_MSG_MAX] = {0};
 static volatile uint32_t g_drop_timer_send_by_type[UI_MSG_MAX] = {0};
 
 /* �ж���Ϣ�����Ƿ���Ч����ֹ����Խ�� */
-static bool ui_msg_type_valid(UI_msg_type_typdef t)
+static inline bool ui_msg_type_valid(UI_msg_type_typdef t)
 {
     return t < UI_MSG_MAX;
 }
@@ -68,10 +67,12 @@ static void ui_apply_weather_update(const UI_msg_typedef *msg)
       char location[sizeof(msg->msg_data.weather_msg.city) + 1];
       char weather[sizeof(msg->msg_data.weather_msg.weather) + 1];
 
-      memcpy(location, msg->msg_data.weather_msg.city, sizeof(msg->msg_data.weather_msg.city));
-      location[sizeof(msg->msg_data.weather_msg.city)] = '\0';
-      memcpy(weather, msg->msg_data.weather_msg.weather, sizeof(msg->msg_data.weather_msg.weather));
-      weather[sizeof(msg->msg_data.weather_msg.weather)] = '\0';
+      snprintf(location, sizeof(location), "%.*s",
+               (int)sizeof(msg->msg_data.weather_msg.city),
+               msg->msg_data.weather_msg.city);
+      snprintf(weather, sizeof(weather), "%.*s",
+               (int)sizeof(msg->msg_data.weather_msg.weather),
+               msg->msg_data.weather_msg.weather);
 
       lv_label_set_text(guider_ui.weaher_screen_location_label, location);
       lv_label_set_text(guider_ui.weaher_screen_weather_label, weather);
