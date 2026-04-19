@@ -32,9 +32,26 @@ static volatile uint32_t g_drop_task_send_by_type[UI_MSG_MAX] = {0};
 static volatile uint32_t g_drop_timer_send_by_type[UI_MSG_MAX] = {0};
 
 /* �ж���Ϣ�����Ƿ���Ч����ֹ����Խ�� */
+/* Validate message type before indexing stats arrays. */
 static inline bool ui_msg_type_valid(UI_msg_type_typdef t)
 {
     return t < UI_MSG_MAX;
+}
+
+static void ui_copy_bounded_string(char *dst, uint32_t dst_size, const char *src, uint32_t src_size)
+{
+      uint32_t i = 0U;
+      if ((dst == NULL) || (src == NULL) || (dst_size == 0U))
+      {
+            return;
+      }
+
+      while ((i < (dst_size - 1U)) && (i < src_size) && (src[i] != '\0'))
+      {
+            dst[i] = src[i];
+            i++;
+      }
+      dst[i] = '\0';
 }
 
 static void ui_apply_time_update(const UI_msg_typedef *msg)
@@ -67,12 +84,12 @@ static void ui_apply_weather_update(const UI_msg_typedef *msg)
       char location[sizeof(msg->msg_data.weather_msg.city) + 1];
       char weather[sizeof(msg->msg_data.weather_msg.weather) + 1];
 
-      snprintf(location, sizeof(location), "%.*s",
-               (int)sizeof(msg->msg_data.weather_msg.city),
-               msg->msg_data.weather_msg.city);
-      snprintf(weather, sizeof(weather), "%.*s",
-               (int)sizeof(msg->msg_data.weather_msg.weather),
-               msg->msg_data.weather_msg.weather);
+      ui_copy_bounded_string(location, sizeof(location),
+                             msg->msg_data.weather_msg.city,
+                             sizeof(msg->msg_data.weather_msg.city));
+      ui_copy_bounded_string(weather, sizeof(weather),
+                             msg->msg_data.weather_msg.weather,
+                             sizeof(msg->msg_data.weather_msg.weather));
 
       lv_label_set_text(guider_ui.weaher_screen_location_label, location);
       lv_label_set_text(guider_ui.weaher_screen_weather_label, weather);
