@@ -28,7 +28,12 @@ static volatile uint32_t g_drop_timer_send_total = 0;
 /* ����������ͳ�ƣ������±��Ӧ ui_msg_type_t�� */
 static volatile uint32_t g_drop_task_send_by_type[UI_MSG_MAX] = {0};
 static volatile uint32_t g_drop_timer_send_by_type[UI_MSG_MAX] = {0};
-static inline bool ui_msg_type_valid(UI_msg_type_typdef t);
+
+/* �ж���Ϣ�����Ƿ���Ч����ֹ����Խ�� */
+static bool ui_msg_type_valid(UI_msg_type_typdef t)
+{
+    return  (t < UI_MSG_MAX);
+}
 
 static void ui_apply_time_update(const UI_msg_typedef *msg)
 {
@@ -78,7 +83,7 @@ static void ui_apply_dht11_update(const UI_msg_typedef *msg)
       }
 
       lv_label_set_text_fmt(guider_ui.t_h_screen_temp_label,
-                            "%u.%uC",
+                            "%u.%u\xC2\xB0""C",
                             (unsigned int)msg->msg_data.dht11_msg.dht11_temperature_int,
                             (unsigned int)msg->msg_data.dht11_msg.dht11_temperature_dec);
 
@@ -148,16 +153,6 @@ void LVGL_UI_task(void const * argument)
 	}
 	
 }
-
-
-
-
-/* �ж���Ϣ�����Ƿ���Ч����ֹ����Խ�� */
-static inline bool ui_msg_type_valid(UI_msg_type_typdef t)
-{
-    return  (t < UI_MSG_MAX);
-}
-
 
 void UI_Send_msg_from_task(const UI_msg_typedef *msg, TickType_t timeout)
 {
