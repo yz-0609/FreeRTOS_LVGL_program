@@ -34,12 +34,12 @@ static volatile uint32_t g_drop_timer_send_by_type[UI_MSG_MAX] = {0};
 /* �ж���Ϣ�����Ƿ���Ч����ֹ����Խ�� */
 static bool ui_msg_type_valid(UI_msg_type_typdef t)
 {
-    return  (t < UI_MSG_MAX);
+    return (t < UI_MSG_MAX);
 }
 
 static void ui_apply_time_update(const UI_msg_typedef *msg)
 {
-      if(msg == NULL)
+      if (msg == NULL)
       {
             return;
       }
@@ -59,7 +59,7 @@ static void ui_apply_time_update(const UI_msg_typedef *msg)
 
 static void ui_apply_weather_update(const UI_msg_typedef *msg)
 {
-      if(msg == NULL)
+      if (msg == NULL)
       {
             return;
       }
@@ -76,7 +76,7 @@ static void ui_apply_weather_update(const UI_msg_typedef *msg)
 
 static void ui_apply_dht11_update(const UI_msg_typedef *msg)
 {
-      if(msg == NULL)
+      if (msg == NULL)
       {
             return;
       }
@@ -94,12 +94,12 @@ static void ui_apply_dht11_update(const UI_msg_typedef *msg)
 
 static void ui_process_msg(const UI_msg_typedef *msg)
 {
-      if((msg == NULL) || !ui_msg_type_valid(msg->msg_type))
+      if ((msg == NULL) || !ui_msg_type_valid(msg->msg_type))
       {
             return;
       }
 
-      switch(msg->msg_type)
+      switch (msg->msg_type)
       {
             case UI_TIME_UPDATE:
                   ui_apply_time_update(msg);
@@ -141,7 +141,7 @@ void LVGL_UI_task(void const * argument)
 	for(;;)
 	{
             uint32_t handled_msgs = 0;
-            while((handled_msgs < UI_MAX_MSG_PER_CYCLE) &&
+            while ((handled_msgs < UI_MAX_MSG_PER_CYCLE) &&
                   (xQueueReceive(UI_queue_handle, &ui_msg, 0) == pdPASS))
             {
                   ui_process_msg(&ui_msg);
@@ -158,15 +158,15 @@ void LVGL_UI_task(void const * argument)
 
 void UI_Send_msg_from_task(const UI_msg_typedef *msg, TickType_t timeout)
 {
-   if((UI_queue_handle == NULL) || (msg == NULL))
+   if ((UI_queue_handle == NULL) || (msg == NULL))
    {
       return;
    }
 
-   if(xQueueSend(UI_queue_handle, msg, timeout) != pdPASS)
+   if (xQueueSend(UI_queue_handle, msg, timeout) != pdPASS)
    {
       g_drop_task_send_total++;   // ������ʧ�ܵ��ܼ�������
-      if(msg!=NULL&&ui_msg_type_valid(msg->msg_type))
+      if (msg != NULL && ui_msg_type_valid(msg->msg_type))
       {
          g_drop_task_send_by_type[msg->msg_type]++;  // ������Ϣ����ͳ��������ʧ�ܵķ����ͼ�������
       }
@@ -178,15 +178,15 @@ void UI_Send_msg_from_task(const UI_msg_typedef *msg, TickType_t timeout)
 
 void UI_Send_msg_from_timer(const UI_msg_typedef *msg)
 {
-   if((UI_queue_handle == NULL) || (msg == NULL))
+   if ((UI_queue_handle == NULL) || (msg == NULL))
    {
       return;
    }
 
-   if(xQueueSend(UI_queue_handle, msg, 0) != pdPASS)
+   if (xQueueSend(UI_queue_handle, msg, 0) != pdPASS)
    {
       g_drop_timer_send_total++;   // ��ʱ������ʧ�ܵ��ܼ�������
-      if(msg!=NULL&&ui_msg_type_valid(msg->msg_type))
+      if (msg != NULL && ui_msg_type_valid(msg->msg_type))
       {
          g_drop_timer_send_by_type[msg->msg_type]++;  // ������Ϣ����ͳ�ƶ�ʱ������ʧ�ܵķ����ͼ�������
       }
