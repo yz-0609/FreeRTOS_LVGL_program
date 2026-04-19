@@ -140,12 +140,15 @@ void LVGL_UI_task(void const * argument)
 
 	for(;;)
 	{
-            uint32_t handled_msgs = 0;
-            while ((handled_msgs < UI_MAX_MSG_PER_CYCLE) &&
-                  (xQueueReceive(UI_queue_handle, &ui_msg, 0) == pdPASS))
+            if (UI_queue_handle != NULL)
             {
-                  ui_process_msg(&ui_msg);
-                  handled_msgs++;
+                  uint32_t handled_msgs = 0;
+                  while ((handled_msgs < UI_MAX_MSG_PER_CYCLE) &&
+                        (xQueueReceive(UI_queue_handle, &ui_msg, 0) == pdPASS))
+                  {
+                        ui_process_msg(&ui_msg);
+                        handled_msgs++;
+                  }
             }
 
 		lv_timer_handler();
