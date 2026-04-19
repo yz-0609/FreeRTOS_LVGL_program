@@ -9,7 +9,9 @@
 #include "lv_port_indev.h"       // LVGL�Ĵ���֧��
 #include "gui_guider.h"
 #include "events_init.h"
-#include "string.h"
+
+#define UI_MAX_MSG_PER_CYCLE 10U
+#define UI_DEGREE_SYMBOL     "\xC2\xB0"
 
 lv_ui guider_ui;
 
@@ -62,17 +64,14 @@ static void ui_apply_weather_update(const UI_msg_typedef *msg)
             return;
       }
 
-      char location[sizeof(msg->msg_data.weather_msg.city) + 1];
-      char weather[sizeof(msg->msg_data.weather_msg.weather) + 1];
-
-      memcpy(location, msg->msg_data.weather_msg.city, sizeof(msg->msg_data.weather_msg.city));
-      location[sizeof(msg->msg_data.weather_msg.city)] = '\0';
-
-      memcpy(weather, msg->msg_data.weather_msg.weather, sizeof(msg->msg_data.weather_msg.weather));
-      weather[sizeof(msg->msg_data.weather_msg.weather)] = '\0';
-
-      lv_label_set_text(guider_ui.weaher_screen_location_label, location);
-      lv_label_set_text(guider_ui.weaher_screen_weather_label, weather);
+      lv_label_set_text_fmt(guider_ui.weaher_screen_location_label,
+                            "%.*s",
+                            (int)sizeof(msg->msg_data.weather_msg.city),
+                            msg->msg_data.weather_msg.city);
+      lv_label_set_text_fmt(guider_ui.weaher_screen_weather_label,
+                            "%.*s",
+                            (int)sizeof(msg->msg_data.weather_msg.weather),
+                            msg->msg_data.weather_msg.weather);
 }
 
 static void ui_apply_dht11_update(const UI_msg_typedef *msg)
@@ -83,7 +82,7 @@ static void ui_apply_dht11_update(const UI_msg_typedef *msg)
       }
 
       lv_label_set_text_fmt(guider_ui.t_h_screen_temp_label,
-                            "%u.%u\xC2\xB0""C",
+                            "%u.%u" UI_DEGREE_SYMBOL "C",
                             (unsigned int)msg->msg_data.dht11_msg.dht11_temperature_int,
                             (unsigned int)msg->msg_data.dht11_msg.dht11_temperature_dec);
 
@@ -141,9 +140,12 @@ void LVGL_UI_task(void const * argument)
 
 	for(;;)
 	{
-            while(xQueueReceive(UI_queue_handle, &ui_msg, 0) == pdPASS)
+            uint32_t handled_msgs = 0;
+            while((handled_msgs < UI_MAX_MSG_PER_CYCLE) &&
+                  (xQueueReceive(UI_queue_handle, &ui_msg, 0) == pdPASS))
             {
                   ui_process_msg(&ui_msg);
+                  handled_msgs++;
             }
 
 		lv_timer_handler();
