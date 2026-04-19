@@ -34,7 +34,7 @@ static volatile uint32_t g_drop_timer_send_by_type[UI_MSG_MAX] = {0};
 /* �ж���Ϣ�����Ƿ���Ч����ֹ����Խ�� */
 static bool ui_msg_type_valid(UI_msg_type_typdef t)
 {
-    return (t < UI_MSG_MAX);
+    return t < UI_MSG_MAX;
 }
 
 static void ui_apply_time_update(const UI_msg_typedef *msg)
@@ -166,7 +166,7 @@ void UI_Send_msg_from_task(const UI_msg_typedef *msg, TickType_t timeout)
    if (xQueueSend(UI_queue_handle, msg, timeout) != pdPASS)
    {
       g_drop_task_send_total++;   // ������ʧ�ܵ��ܼ�������
-      if (msg != NULL && ui_msg_type_valid(msg->msg_type))
+      if (ui_msg_type_valid(msg->msg_type))
       {
          g_drop_task_send_by_type[msg->msg_type]++;  // ������Ϣ����ͳ��������ʧ�ܵķ����ͼ�������
       }
@@ -186,7 +186,7 @@ void UI_Send_msg_from_timer(const UI_msg_typedef *msg)
    if (xQueueSend(UI_queue_handle, msg, 0) != pdPASS)
    {
       g_drop_timer_send_total++;   // ��ʱ������ʧ�ܵ��ܼ�������
-      if (msg != NULL && ui_msg_type_valid(msg->msg_type))
+      if (ui_msg_type_valid(msg->msg_type))
       {
          g_drop_timer_send_by_type[msg->msg_type]++;  // ������Ϣ����ͳ�ƶ�ʱ������ʧ�ܵķ����ͼ�������
       }
