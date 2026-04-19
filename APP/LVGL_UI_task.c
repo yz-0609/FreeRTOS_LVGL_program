@@ -11,7 +11,7 @@
 #include "gui_guider.h"
 #include "events_init.h"
 
-#define UI_MAX_MSG_PER_CYCLE 10U
+#define UI_MAX_MSG_PER_CYCLE LVGL_UI_QUEUE_LENGTH
 #define UI_DEGREE_SYMBOL     "\xC2\xB0"
 #define UI_REFRESH_PERIOD_MS 50U
 #define UI_DATE_TEXT_LEN     16U
@@ -94,7 +94,7 @@ static bool ui_text_changed_and_update_cache(char *cache, uint32_t cache_size, b
             return false;
       }
 
-      ui_copy_bounded_string(cache, cache_size, new_text, (uint32_t)strlen(new_text));
+      ui_copy_bounded_string(cache, cache_size, new_text, cache_size);
       *cache_valid = true;
       return true;
 }
