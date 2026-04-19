@@ -9,6 +9,7 @@
 #include "lv_port_indev.h"       // LVGL�Ĵ���֧��
 #include "gui_guider.h"
 #include "events_init.h"
+#include "string.h"
 
 #define UI_MAX_MSG_PER_CYCLE 10U
 #define UI_DEGREE_SYMBOL     "\xC2\xB0"
@@ -64,14 +65,16 @@ static void ui_apply_weather_update(const UI_msg_typedef *msg)
             return;
       }
 
-      lv_label_set_text_fmt(guider_ui.weaher_screen_location_label,
-                            "%.*s",
-                            (int)sizeof(msg->msg_data.weather_msg.city),
-                            msg->msg_data.weather_msg.city);
-      lv_label_set_text_fmt(guider_ui.weaher_screen_weather_label,
-                            "%.*s",
-                            (int)sizeof(msg->msg_data.weather_msg.weather),
-                            msg->msg_data.weather_msg.weather);
+      char location[sizeof(msg->msg_data.weather_msg.city) + 1];
+      char weather[sizeof(msg->msg_data.weather_msg.weather) + 1];
+
+      memcpy(location, msg->msg_data.weather_msg.city, sizeof(msg->msg_data.weather_msg.city));
+      location[sizeof(msg->msg_data.weather_msg.city)] = '\0';
+      memcpy(weather, msg->msg_data.weather_msg.weather, sizeof(msg->msg_data.weather_msg.weather));
+      weather[sizeof(msg->msg_data.weather_msg.weather)] = '\0';
+
+      lv_label_set_text(guider_ui.weaher_screen_location_label, location);
+      lv_label_set_text(guider_ui.weaher_screen_weather_label, weather);
 }
 
 static void ui_apply_dht11_update(const UI_msg_typedef *msg)
